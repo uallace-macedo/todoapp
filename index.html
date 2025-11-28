@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Todo APP</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+    integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="app">
+    <header>
+      <h1>
+        <i class="fas fa-check-circle"></i>
+        Minhas Tasks
+      </h1>
+      <p id="date"></p>
+    </header>
+
+    <div class="todo-input">
+      <input type="text" name="task-input" id="task-input" placeholder="O que você precisa fazer?">
+      <button id="add-task">
+        <i class="fas fa-plus"></i>
+      </button>
+    </div>
+
+    <div class="filters">
+      <span class="filter active" data-filter="all">Tudo</span>
+      <span class="filter" data-filter="active">A fazer</span>
+      <span class="filter" data-filter="completed">Feito</span>
+    </div>
+
+    <div class="todos-container">
+      <ul id="todos-list"></ul>
+
+      <div class="empty-state hidden">
+        <i class="fas fa-clipboard-list"></i>
+        <p>Nenhuma task foi adicionada.</p>
+      </div>
+    </div>
+
+    <footer>
+      <p id="items-left"></p>
+      <button id="clear-completed">Limpar completas</button>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
