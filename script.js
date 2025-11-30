@@ -79,6 +79,9 @@ function renderTodos() {
 
       todosList.appendChild(todoItem);
     });
+
+  updateItemsCount();
+  checkEmptyState();
 }
 
 function toggleTodo(id) {
@@ -111,7 +114,7 @@ function updateItemsCount() {
 
 function checkEmptyState() {
   const filteredTodos = filterTodos(currentFilter);
-  if (filteredTodos.length === 0) emptyState.classList.remove("hidden")
+  if (filteredTodos.length === 0) emptyState.classList.remove("hidden");
   else emptyState.classList.add("hidden");
 }
 
@@ -174,7 +177,6 @@ function initSortable() {
     },
   });
 }
-
 
 /* ======= SIMPLES LISTENERS */
 addTaskBtn.addEventListener("click", () => addTodo(taskInput.value));
