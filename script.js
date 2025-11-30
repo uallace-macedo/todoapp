@@ -21,15 +21,13 @@ function loadTodos() {
 function addTodo(text) {
   if (text.trim() === "") return;
 
-  const todo = {
+  todos.push({
     id: Date.now(),
     text,
     completed: false
-  }
+  });
 
-  todos.push(todo);
-
-  saveTodos();
+  updateItemsCount();
   renderTodos();
   taskInput.value = "";
 }
@@ -43,57 +41,57 @@ function saveTodos() {
 function renderTodos() {
   todosList.innerHTML = "";
 
-  const filteredTodos = filterTodos(currentFilter);
-  filteredTodos.forEach(todo => {
-    const todoItem = document.createElement("li");
-    todoItem.classList.add("todo-item");
-    if (todo.completed) todoItem.classList.add("completed");
+  filterTodos(currentFilter)
+    .forEach((todo) => {
+      const todoItem = document.createElement("li");
 
-    const checkBoxContainer = document.createElement("label");
-    checkBoxContainer.classList.add("checkbox-container");
+      todoItem.classList.add("todo-item");
+      todoItem.setAttribute("data-id", todo.id);
 
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.classList.add("todo-checkbox");
-    checkbox.checked = todo.completed;
-    checkbox.addEventListener("change", () => toggleTodo(todo.id));
+      if (todo.completed) todoItem.classList.add("completed");
 
-    const checkmark = document.createElement("span");
-    checkmark.classList.add("checkmark");
+      todoItem.innerHTML = `
+      <button class="drag-btn">
+          <i class="fa-solid fa-bars"></i>
+      </button>
+      
+      <label class="checkbox-container">
+          <input 
+              type="checkbox" 
+              class="todo-checkbox" 
+              ${todo.completed ? 'checked' : ''} 
+          />
+          <span class="checkmark"></span>
+      </label>
+      
+      <span class="todo-item-text">${todo.text}</span>
+      
+      <button class="delete-btn">
+          <i class="fas fa-times"></i>
+      </button>
+    `;
 
-    checkBoxContainer.appendChild(checkbox);
-    checkBoxContainer.appendChild(checkmark);
+      const checkbox = todoItem.querySelector(".todo-checkbox");
+      checkbox.addEventListener("change", () => toggleTodo(todo.id));
 
-    const todoText = document.createElement("span");
-    todoText.classList.add("todo-item-text");
-    todoText.textContent = todo.text;
+      const deleteBtn = todoItem.querySelector(".delete-btn");
+      deleteBtn.addEventListener("click", () => deleteTodo(todo.id));
 
-    const deleteBtn = document.createElement("button");
-    deleteBtn.classList.add("delete-btn");
-    deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
-    deleteBtn.addEventListener("click", () => deleteTodo(todo.id));
-
-    todoItem.appendChild(checkBoxContainer);
-    todoItem.appendChild(todoText);
-    todoItem.appendChild(deleteBtn);
-
-    todosList.appendChild(todoItem);
-  })
+      todosList.appendChild(todoItem);
+    });
 }
 
 function toggleTodo(id) {
-  todos.map(todo => {
+  todos = todos.map(todo => {
     if (todo.id === id) todo.completed = !todo.completed;
     return todo;
   });
 
-  saveTodos();
   renderTodos();
 }
 
 function deleteTodo(id) {
   todos = todos.filter(todo => todo.id !== id);
-  saveTodos();
   renderTodos();
 }
 
@@ -130,7 +128,6 @@ function filterTodos(filter) {
 
 function clearCompleted() {
   todos = todos.filter(todo => !todo.completed);
-  saveTodos();
   renderTodos();
 }
 
@@ -156,10 +153,30 @@ function setDate() {
 
   const today = new Date();
   dateElement.textContent = today.toLocaleDateString("pt-BR", options);
-
 }
 
-/* ======= LISTENERS */
+/* ======= SORTABLEJS LOGIC */
+
+function updateTodosOrder(oldIndex, newIndex) {
+  const movedTodo = todos[oldIndex];
+  todos.splice(oldIndex, 1);
+  todos.splice(newIndex, 0, movedTodo);
+}
+
+function initSortable() {
+  new Sortable(todosList, {
+    animation: 100,
+    handle: '.drag-btn',
+    delay: 10,
+
+    onEnd: function (evt) {
+      updateTodosOrder(evt.oldIndex, evt.newIndex);
+    },
+  });
+}
+
+
+/* ======= SIMPLES LISTENERS */
 addTaskBtn.addEventListener("click", () => addTodo(taskInput.value));
 
 taskInput.addEventListener("keydown", (e) => {
@@ -179,4 +196,9 @@ window.addEventListener("DOMContentLoaded", () => {
   loadTodos();
   updateItemsCount();
   setDate();
+  initSortable();
 })
+
+window.addEventListener("beforeunload", () => {
+  saveTodos();
+});

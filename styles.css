@@ -216,6 +216,20 @@ header p {
   color: var(--gray);
 }
 
+.drag-btn {
+  margin-right: .8rem;
+  font-size: 1rem;
+  color: var(--gray);
+  
+  background: none;
+  border: none;
+  
+  cursor: pointer;
+  transition: all .2s;
+
+  outline: none;
+}
+
 .delete-btn {
   opacity: 0;
   
@@ -286,4 +300,9 @@ footer {
 
 #clear-completed:hover {
   color: var(--danger);
+}
+
+.over {
+  background-color: var(--dark);
+  color: var(--light);
 }
